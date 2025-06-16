@@ -1,0 +1,44 @@
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import explode, split
+import os
+from pyspark.sql.types import ArrayType
+from pyspark.sql.functions import from_json, col
+from pyspark.sql.types import StructType, StringType, IntegerType
+# Set the exact package versions for Spark 3.0.1
+os.environ['PYSPARK_SUBMIT_ARGS'] = '--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.1,org.apache.kafka:kafka-clients:2.4.1 pyspark-shell'
+spark = SparkSession.builder \
+    .appName("KafkaSparkStreaming2234") \
+    .getOrCreate()
+
+# Define the schema matching the JSON structure
+schema = StructType() \
+    .add("userId", IntegerType()) \
+    .add("id", IntegerType()) \
+    .add("title", StringType()) \
+    .add("body", StringType())
+
+# Read from Kafka
+df = spark.readStream \
+    .format("kafka") \
+    .option("kafka.bootstrap.servers", "localhost:9092") \
+    .option("subscribe", "web2") \
+    .load()
+
+
+# Convert binary to string
+df_str = df.selectExpr("CAST(value AS STRING) as json_str")
+
+# Parse JSON into columns
+from pyspark.sql.functions import explode
+
+# Parse JSON array and explode it
+array_schema = ArrayType(schema)
+
+df_array = df_str.select(from_json(col("json_str"), array_schema).alias("data"))
+df_parsed = df_array.select(explode(col("data")).alias("record")).select("record.*")
+
+# Show results (console, memory, etc.)
+query = df_parsed.writeStream \
+    .outputMode("append") \
+    .format("console") \
+    .start()
