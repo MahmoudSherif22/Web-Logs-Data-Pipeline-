@@ -31,19 +31,6 @@ Parsed logs enable:
 - Raw Format: Logs are preserved in their original Nginx format in HDFS.
 - Kafka Format: Messages are transmitted as byte arrays.
 - Parsed Format: Spark converts logs to structured JSON for downstream use.
-## 📁 Repository Structure
-├── flume-config/
-
-│   └── nginx-taildir.conf
-
-├── spark-streaming/
-
-│   └── log_parser.py
-├── nginx/
-
-│   └── default.conf
-
-├── README.md
 
 
 
