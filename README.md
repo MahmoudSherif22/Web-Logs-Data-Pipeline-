@@ -33,11 +33,16 @@ Parsed logs enable:
 - Parsed Format: Spark converts logs to structured JSON for downstream use.
 ## 📁 Repository Structure
 ├── flume-config/
+
 │   └── nginx-taildir.conf
+
 ├── spark-streaming/
+
 │   └── log_parser.py
 ├── nginx/
+
 │   └── default.conf
+
 ├── README.md
 
 
