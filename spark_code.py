@@ -42,7 +42,7 @@ def convertDataToTableFormat(df):
     
 def showDataInConsole(df):
     query = df.writeStream \
-    .outputMode("append") \
+    .outputMode("complete") \
     .format("console") \
     .start()
     query.awaitTermination()
